@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KIS file – Release Notes 1.0.0</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7ff;
+            color: #1a1a2e;
+            padding: 56px 24px 72px;
+        }
+
+        .container {
+            max-width: 780px;
+            margin: 0 auto;
+        }
+
+        /* ── Brand header ─────────────────────────────────── */
+        .brand-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+        .brand-logo {
+            width: 44px; height: 44px;
+            background: #5064d4;
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 22px; color: white;
+        }
+        .brand-name {
+            font-size: 15px; font-weight: 700; color: #5064d4;
+            letter-spacing: 0.5px;
+        }
+        .brand-sub {
+            font-size: 12px; color: #9ca3af;
+        }
+
+        /* ── Title card ───────────────────────────────────── */
+        .title-card {
+            background: linear-gradient(135deg, #5064d4 0%, #3a4ebc 100%);
+            border-radius: 16px;
+            padding: 32px 36px;
+            color: white;
+            margin-bottom: 32px;
+            box-shadow: 0 8px 32px rgba(80,100,212,0.25);
+        }
+        .title-card .label {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            opacity: 0.75;
+            margin-bottom: 8px;
+        }
+        .title-card h1 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        .title-card .date-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.18);
+            border-radius: 20px;
+            padding: 4px 14px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+        .title-card .intro {
+            margin-top: 14px;
+            font-size: 14px;
+            opacity: 0.88;
+            line-height: 1.7;
+        }
+        .title-card strong { opacity: 1; font-weight: 700; }
+
+        /* ── Section header ───────────────────────────────── */
+        .section-title {
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #5064d4;
+            margin: 32px 0 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .section-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #e0e5f7;
+        }
+
+        /* ── Feature list ─────────────────────────────────── */
+        .feature-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .feature-list li {
+            background: white;
+            border-radius: 10px;
+            border-left: 4px solid #5064d4;
+            padding: 14px 18px;
+            font-size: 14px;
+            line-height: 1.55;
+            box-shadow: 0 1px 6px rgba(80,100,212,0.07);
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+        .feature-list li .icon {
+            font-size: 18px;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+        .feature-list li .text strong {
+            display: block;
+            font-weight: 600;
+            color: #1a1a2e;
+            margin-bottom: 2px;
+        }
+        .feature-list li .text span {
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+        /* ── Recommendation card ──────────────────────────── */
+        .recommend-card {
+            background: white;
+            border-radius: 14px;
+            padding: 28px 32px;
+            border: 1px solid #e0e5f7;
+            font-size: 14px;
+            color: #374151;
+            line-height: 1.85;
+            box-shadow: 0 2px 12px rgba(80,100,212,0.06);
+        }
+        .recommend-card p { margin-bottom: 14px; }
+        .recommend-card p:last-child { margin-bottom: 0; }
+        .recommend-card strong { color: #5064d4; }
+
+        /* ── Comparison table ─────────────────────────────── */
+        .compare-wrapper {
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+        table.compare {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13.5px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 12px rgba(80,100,212,0.08);
+        }
+        table.compare thead tr th {
+            background: #5064d4;
+            color: white;
+            padding: 13px 18px;
+            text-align: left;
+            font-weight: 600;
+        }
+        table.compare thead tr th:first-child { border-radius: 0; }
+        table.compare tbody tr td {
+            padding: 11px 18px;
+            border-bottom: 1px solid #f0f2ff;
+            background: white;
+            vertical-align: middle;
+        }
+        table.compare tbody tr:last-child td { border-bottom: none; }
+        table.compare tbody tr:nth-child(even) td { background: #f8faff; }
+        table.compare .feature-col { font-weight: 600; color: #374151; }
+        .yes { color: #10b981; font-weight: 700; }
+        .no  { color: #ef4444; font-weight: 700; }
+        .partial { color: #f59e0b; font-weight: 600; }
+        .winner-badge {
+            background: #eef2ff;
+            color: #5064d4;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-left: 6px;
+        }
+
+        /* ── Footer ───────────────────────────────────────── */
+        .footer {
+            margin-top: 44px;
+            text-align: center;
+            font-size: 12px;
+            color: #9ca3af;
+        }
+        .footer strong { color: #5064d4; }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <!-- Brand -->
+    <div class="brand-bar">
+        <div class="brand-logo">🗜</div>
+        <div>
+            <div class="brand-name">Anti-Moumen</div>
+            <div class="brand-sub">Software Development</div>
+        </div>
+    </div>
+
+    <!-- Title card -->
+    <div class="title-card">
+        <div class="label">Release Notes</div>
+        <h1>KIS file – Staging Build (1.0.0)</h1>
+        <span class="date-badge">23 / 04 / 2026</span>
+        <p class="intro">
+            Please note that new release <strong>1.0.0</strong> has been published on the
+            Staging environment and it contains the following features and improvements:
+        </p>
+    </div>
+
+    <!-- Features -->
+    <div class="section-title">Features</div>
+    <ul class="feature-list">
+        <li>
+            <span class="icon">🗜</span>
+            <div class="text">
+                <strong>LZMA Compression</strong>
+                <span>Up to 50% better compression ratio than standard ZIP (Deflate). Uses the same algorithm as 7-Zip's .7z format for smaller output files.</span>
+            </div>
+        </li>
+        <li>
+            <span class="icon">🔒</span>
+            <div class="text">
+                <strong>AES-256-CBC Encryption + PBKDF2-SHA256 Key Derivation (600,000 iterations)</strong>
+                <span>Military-grade encryption with a brute-force-resistant key. Each archive uses a unique random salt and IV. Completely uncrackable with current computing power.</span>
+            </div>
+        </li>
+        <li>
+            <span class="icon">🛡</span>
+            <div class="text">
+                <strong>HMAC-SHA256 Integrity Authentication</strong>
+                <span>Encrypt-then-MAC design prevents undetected tampering. Any modification to the encrypted data is immediately detected before decryption.</span>
+            </div>
+        </li>
+        <li>
+            <span class="icon">✅</span>
+            <div class="text">
+                <strong>SHA-256 Per-file Checksums</strong>
+                <span>Every file inside the archive has its own cryptographic checksum. Detects corruption or tampering on individual files, not just the archive as a whole.</span>
+            </div>
+        </li>
+        <li>
+            <span class="icon">🕵</span>
+            <div class="text">
+                <strong>Encrypted Filenames</strong>
+                <span>Optionally encrypt file paths so no metadata is revealed to external tools or scanners. The archive is completely opaque — no one can see what's inside without the password.</span>
+            </div>
+        </li>
+        <li>
+            <span class="icon">✂</span>
+            <div class="text">
+                <strong>Split Archive Support</strong>
+                <span>Split large archives into smaller parts of a configurable size, making them easy to upload, email, or store across multiple drives.</span>
+            </div>
+        </li>
+        <li>
+            <span class="icon">📋</span>
+            <div class="text">
+                <strong>Full File Metadata Preservation</strong>
+                <span>Timestamps (created, modified, accessed) and file attributes are stored and restored exactly, keeping your file history intact.</span>
+            </div>
+        </li>
+        <li>
+            <span class="icon">🖥</span>
+            <div class="text">
+                <strong>Modern Windows 10 / 11 Native UI</strong>
+                <span>Clean, fast interface with drag-and-drop file support, real-time progress tracking, and NavigationView-based navigation. No clutter.</span>
+            </div>
+        </li>
+    </ul>
+
+    <!-- Recommendation -->
+    <div class="section-title">Why I Recommend KIS file</div>
+    <div class="recommend-card">
+        <p>
+            ZIP was created in <strong>1989</strong> — back when floppy disks were the primary storage medium
+            and encryption was barely an afterthought. For over 30 years, ZIP has been the default choice
+            simply because it's everywhere, not because it's good. In 2026, that's no longer an acceptable reason.
+        </p>
+        <p>
+            <strong>KIS file</strong> was built from the ground up to answer every weakness ZIP has.
+            Its LZMA compression produces files that are consistently <strong>30–50% smaller</strong> than ZIP
+            for the same content. Its AES-256 encryption with 600,000-iteration PBKDF2 key derivation is
+            orders of magnitude stronger than ZIP's ZipCrypto, which can be cracked in seconds with free tools.
+        </p>
+        <p>
+            But the feature that sets KIS file truly apart is <strong>encrypted filenames</strong>.
+            Even with password-protected ZIP files, anyone can open the archive and see every filename,
+            folder structure, and file size — revealing exactly what you're trying to protect.
+            With KIS file, none of that information leaks. The archive is a black box.
+        </p>
+        <p>
+            If you care about your files — whether personal documents, client data, or sensitive projects —
+            <strong>ZIP is not enough</strong>. KIS file gives you compression that's actually worth it,
+            security that's actually secure, and an interface that's actually pleasant to use.
+        </p>
+    </div>
+
+    <!-- Comparison table -->
+    <div class="compare-wrapper">
+        <table class="compare">
+            <thead>
+                <tr>
+                    <th>Feature</th>
+                    <th>KIS file</th>
+                    <th>ZIP</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="feature-col">Compression Algorithm</td>
+                    <td><span class="yes">LZMA</span><span class="winner-badge">WINNER</span></td>
+                    <td><span class="partial">Deflate</span></td>
+                </tr>
+                <tr>
+                    <td class="feature-col">Compression Ratio</td>
+                    <td><span class="yes">Up to 50% smaller</span><span class="winner-badge">WINNER</span></td>
+                    <td><span class="partial">Baseline</span></td>
+                </tr>
+                <tr>
+                    <td class="feature-col">Encryption</td>
+                    <td><span class="yes">AES-256-CBC</span><span class="winner-badge">WINNER</span></td>
+                    <td><span class="no">ZipCrypto (broken)</span></td>
+                </tr>
+                <tr>
+                    <td class="feature-col">Key Derivation</td>
+                    <td><span class="yes">PBKDF2-SHA256 (600k iter.)</span><span class="winner-badge">WINNER</span></td>
+                    <td><span class="no">None</span></td>
+                </tr>
+                <tr>
+                    <td class="feature-col">Tamper Detection</td>
+                    <td><span class="yes">HMAC-SHA256</span><span class="winner-badge">WINNER</span></td>
+                    <td><span class="no">None</span></td>
+                </tr>
+                <tr>
+                    <td class="feature-col">Per-file Checksum</td>
+                    <td><span class="yes">SHA-256</span><span class="winner-badge">WINNER</span></td>
+                    <td><span class="partial">CRC-32 (weak)</span></td>
+                </tr>
+                <tr>
+                    <td class="feature-col">Encrypted Filenames</td>
+                    <td><span class="yes">✔ Yes</span><span class="winner-badge">WINNER</span></td>
+                    <td><span class="no">✘ No</span></td>
+                </tr>
+                <tr>
+                    <td class="feature-col">Split Archive Support</td>
+                    <td><span class="yes">✔ Yes</span></td>
+                    <td><span class="partial">Limited</span></td>
+                </tr>
+                <tr>
+                    <td class="feature-col">Metadata Preservation</td>
+                    <td><span class="yes">✔ Full (timestamps + attrs)</span><span class="winner-badge">WINNER</span></td>
+                    <td><span class="partial">Partial</span></td>
+                </tr>
+                <tr>
+                    <td class="feature-col">Brute-force Resistance</td>
+                    <td><span class="yes">Extremely High</span><span class="winner-badge">WINNER</span></td>
+                    <td><span class="no">Seconds to crack</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <strong>KIS file</strong> v1.0.0 &nbsp;·&nbsp; Built with ♥ by <strong>Anti-Moumen</strong> &nbsp;·&nbsp; 2026 &nbsp;·&nbsp; Format: .kes
+    </div>
+
+</div>
+</body>
+</html>

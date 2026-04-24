@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SharpCompress" Version="0.37.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\KesFile\Services\KesCompressionService.cs">
+      <Link>Linked\KesCompressionService.cs</Link>
+    </Compile>
+    <Compile Include="..\..\KesFile\Models\KesHeader.cs">
+      <Link>Linked\KesHeader.cs</Link>
+    </Compile>
+    <Compile Include="..\..\KesFile\Models\ArchiveOptions.cs">
+      <Link>Linked\ArchiveOptions.cs</Link>
+    </Compile>
+  </ItemGroup>
+</Project>
