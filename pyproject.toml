@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "kis"
+version = "1.0.0"
+description = "KIS — Keep It Simple archive format: LZMA compression, AES-256-GCM encryption, encrypted filenames"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+dependencies = [
+    "cryptography>=41",
+]
+
+[project.scripts]
+kis = "kis.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["kis*"]
