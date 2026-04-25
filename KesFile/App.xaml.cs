@@ -47,6 +47,7 @@ namespace KesFile
                 if (e.PrelaunchActivated) return;
                 if (rootFrame.Content == null)
                     rootFrame.Navigate(typeof(MainPage), e.Arguments);
+                Services.ThemeService.ApplyCurrent();
                 Window.Current.Activate();
             }
             catch (Exception ex)
@@ -66,6 +67,7 @@ namespace KesFile
             else if (rootFrame.Content is MainPage mainPage)
                 mainPage.OpenArchiveFile(args.Files[0] as Windows.Storage.StorageFile);
 
+            Services.ThemeService.ApplyCurrent();
             Window.Current.Activate();
         }
 

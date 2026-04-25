@@ -5,22 +5,43 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    Background="{ThemeResource PageBackgroundBrush}">
 
     <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <StackPanel Margin="40,32,40,40" Spacing="24">
+        <StackPanel Margin="40,32,40,40" Spacing="24" MaxWidth="800" HorizontalAlignment="Stretch">
             <TextBlock Text="Settings"
-                       Style="{StaticResource TitleTextBlockStyle}"
-                       Foreground="#1A1A2E"/>
+                       FontSize="32" FontWeight="Bold"
+                       Foreground="{ThemeResource CardForegroundBrush}"/>
+
+            <!-- Appearance -->
+            <Border Background="{ThemeResource CardBackgroundBrush}" CornerRadius="12"
+                    BorderBrush="{ThemeResource CardBorderBrush}" BorderThickness="1" Padding="24,20">
+                <StackPanel Spacing="14">
+                    <TextBlock Text="Appearance"
+                               FontWeight="SemiBold" FontSize="15"
+                               Foreground="{ThemeResource CardForegroundBrush}"/>
+                    <TextBlock Text="Choose how KIS looks. System follows your Windows theme."
+                               Foreground="{ThemeResource CardSubtleForegroundBrush}" FontSize="13"/>
+                    <ComboBox x:Name="ThemeComboBox"
+                              HorizontalAlignment="Stretch" CornerRadius="8"
+                              SelectionChanged="ThemeCombo_SelectionChanged">
+                        <ComboBoxItem Content="System (default)" Tag="System"/>
+                        <ComboBoxItem Content="Light"            Tag="Light"/>
+                        <ComboBoxItem Content="Dark"             Tag="Dark"/>
+                    </ComboBox>
+                </StackPanel>
+            </Border>
 
             <!-- Defaults -->
-            <Border Background="White" CornerRadius="12"
-                    BorderBrush="#E5E7EB" BorderThickness="1" Padding="24,20">
+            <Border Background="{ThemeResource CardBackgroundBrush}" CornerRadius="12"
+                    BorderBrush="{ThemeResource CardBorderBrush}" BorderThickness="1" Padding="24,20">
                 <StackPanel Spacing="16">
                     <TextBlock Text="Default Compression"
-                               FontWeight="SemiBold" FontSize="15" Foreground="#1A1A2E"/>
+                               FontWeight="SemiBold" FontSize="15"
+                               Foreground="{ThemeResource CardForegroundBrush}"/>
                     <StackPanel Spacing="8">
-                        <TextBlock Text="Algorithm" Foreground="#4B5563" FontSize="13"/>
+                        <TextBlock Text="Algorithm"
+                                   Foreground="{ThemeResource CardSubtleForegroundBrush}" FontSize="13"/>
                         <ComboBox HorizontalAlignment="Stretch" CornerRadius="8"
                                   SelectedIndex="1">
                             <ComboBoxItem Content="None"/>
@@ -32,18 +53,25 @@
             </Border>
 
             <!-- About -->
-            <Border Background="White" CornerRadius="12"
-                    BorderBrush="#E5E7EB" BorderThickness="1" Padding="24,20">
+            <Border Background="{ThemeResource CardBackgroundBrush}" CornerRadius="12"
+                    BorderBrush="{ThemeResource CardBorderBrush}" BorderThickness="1" Padding="24,20">
                 <StackPanel Spacing="10">
-                    <TextBlock Text="About KIS file"
-                               FontWeight="SemiBold" FontSize="15" Foreground="#1A1A2E"/>
+                    <TextBlock Text="About KIS"
+                               FontWeight="SemiBold" FontSize="15"
+                               Foreground="{ThemeResource CardForegroundBrush}"/>
                     <StackPanel Spacing="4">
-                        <TextBlock Text="KIS file v1.0" Foreground="#4B5563"/>
-                        <TextBlock Text="Format: .kes" Foreground="#6B7280" FontSize="12"/>
-                        <TextBlock Text="Compression: LZMA (SharpCompress) / Deflate" Foreground="#6B7280" FontSize="12"/>
-                        <TextBlock Text="Encryption: AES-256-CBC + HMAC-SHA256" Foreground="#6B7280" FontSize="12"/>
-                        <TextBlock Text="Key derivation: PBKDF2-SHA256 (600,000 iterations)" Foreground="#6B7280" FontSize="12"/>
-                        <TextBlock Text="Integrity: SHA-256 per-file checksums" Foreground="#6B7280" FontSize="12"/>
+                        <TextBlock Text="KIS v1.0"
+                                   Foreground="{ThemeResource CardSubtleForegroundBrush}"/>
+                        <TextBlock Text="Format: .kis (legacy .kes accepted)"
+                                   Foreground="{ThemeResource CardMutedForegroundBrush}" FontSize="12"/>
+                        <TextBlock Text="Compression: LZMA (SharpCompress) / Deflate"
+                                   Foreground="{ThemeResource CardMutedForegroundBrush}" FontSize="12"/>
+                        <TextBlock Text="Encryption: AES-256-CBC + HMAC-SHA256"
+                                   Foreground="{ThemeResource CardMutedForegroundBrush}" FontSize="12"/>
+                        <TextBlock Text="Key derivation: PBKDF2-SHA256 (600,000 iterations)"
+                                   Foreground="{ThemeResource CardMutedForegroundBrush}" FontSize="12"/>
+                        <TextBlock Text="Integrity: SHA-256 per-file checksums"
+                                   Foreground="{ThemeResource CardMutedForegroundBrush}" FontSize="12"/>
                     </StackPanel>
                 </StackPanel>
             </Border>

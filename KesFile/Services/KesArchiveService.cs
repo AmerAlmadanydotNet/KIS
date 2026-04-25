@@ -122,7 +122,8 @@ namespace KesFile.Services
                     : new byte[32];
 
                 // Compress
-                byte[] compressed = _compressor.Compress(rawData, options.CompressionType, options.CompressionSpeed);
+                var (compressed, actualCompressionType) =
+                    _compressor.CompressWithActualType(rawData, options.CompressionType, options.CompressionSpeed);
 
                 // Encrypt (if enabled)
                 byte[] stored = options.EnableEncryption && encKey != null && hmacKey != null
@@ -143,7 +144,7 @@ namespace KesFile.Services
                     CreatedUtcTicks  = DateTime.UtcNow.Ticks,
                     FileAttributes   = 0,
                     Sha256Hash       = sha256,
-                    CompressionType  = options.CompressionType,
+                    CompressionType  = actualCompressionType,    // truthful per-entry type (LZMA may fall back to Deflate)
                 };
 
                 entries.Add(entry);
@@ -153,10 +154,30 @@ namespace KesFile.Services
                 OnProgress(i + 1, sourceFiles.Count, relativePath, processedBytes, totalBytes);
             }
 
-            // 4. Write entry table and record its position
+            // 4. Write entry table and record its position.
+            //    When EncryptFileNames is enabled, the table itself is sealed with
+            //    AES-256-CBC + HMAC-SHA256 so neither paths nor sizes leak.
             long entryTableOffset = stream.Position;
-            foreach (var entry in entries)
-                entry.Serialize(writer);
+            bool sealNames = options.EncryptFileNames && encKey != null && hmacKey != null;
+
+            if (sealNames)
+            {
+                using var tableMs = new MemoryStream();
+                using (var tableWriter = new BinaryWriter(tableMs, System.Text.Encoding.UTF8, leaveOpen: true))
+                {
+                    foreach (var entry in entries)
+                        entry.Serialize(tableWriter);
+                    tableWriter.Flush();
+                }
+                byte[] sealedTable = KesEncryptionService.Encrypt(tableMs.ToArray(), encKey!, hmacKey!);
+                writer.Write(sealedTable.Length);  // int32 length prefix
+                writer.Write(sealedTable);
+            }
+            else
+            {
+                foreach (var entry in entries)
+                    entry.Serialize(writer);
+            }
 
             // 5. Seek back to update the header with totals + entry table offset
             stream.Seek(0, SeekOrigin.Begin);
@@ -173,6 +194,28 @@ namespace KesFile.Services
         // ─── Read / Open ─────────────────────────────────────────────────────
 
         /// <summary>
+        /// Reads only the header (and the encryption block, if present) without
+        /// touching the entry table. Useful for showing the password prompt
+        /// before the user has typed a password.
+        /// </summary>
+        public async Task<(KesHeader header, string passwordHint)> PeekArchiveAsync(
+            StorageFile archiveFile)
+        {
+            using IRandomAccessStream ras    = await archiveFile.OpenReadAsync();
+            using Stream              stream = ras.AsStream();
+            using var reader = new BinaryReader(stream, System.Text.Encoding.UTF8, leaveOpen: true);
+
+            var header = KesHeader.Deserialize(reader);
+            string hint = string.Empty;
+            if (header.IsEncrypted)
+            {
+                var encBlock = KesEncryptionBlock.Deserialize(reader);
+                hint = encBlock.PasswordHint ?? string.Empty;
+            }
+            return (header, hint);
+        }
+
+        /// <summary>
         /// Reads the header and entry table from a .kes file without extracting data.
         /// If the archive is encrypted you must supply the <paramref name="password"/>.
         /// </summary>
@@ -187,19 +230,36 @@ namespace KesFile.Services
             var header = KesHeader.Deserialize(reader);
 
             KesEncryptionBlock? encBlock = null;
+            byte[]? openEncKey  = null;
+            byte[]? openHmacKey = null;
             if (header.IsEncrypted)
             {
                 encBlock = KesEncryptionBlock.Deserialize(reader);
                 if (string.IsNullOrEmpty(password))
                     throw new ArgumentException("This archive is encrypted. Please provide the password.");
+                if (header.HasEncryptedNames)
+                    (openEncKey, openHmacKey) = KesEncryptionService.DeriveKeys(password!, encBlock.Salt);
             }
 
             // Jump to the entry table
             stream.Seek(header.EntryTableOffset, SeekOrigin.Begin);
 
             var entries = new List<KesEntryInfo>((int)header.EntryCount);
-            for (uint i = 0; i < header.EntryCount; i++)
-                entries.Add(KesEntryInfo.Deserialize(reader));
+            if (header.HasEncryptedNames && openEncKey != null && openHmacKey != null)
+            {
+                int sealedLen = reader.ReadInt32();
+                byte[] sealedTable = reader.ReadBytes(sealedLen);
+                byte[] tableBytes  = KesEncryptionService.Decrypt(sealedTable, openEncKey, openHmacKey);
+                using var tms = new MemoryStream(tableBytes);
+                using var tr  = new BinaryReader(tms, System.Text.Encoding.UTF8, leaveOpen: true);
+                for (uint i = 0; i < header.EntryCount; i++)
+                    entries.Add(KesEntryInfo.Deserialize(tr));
+            }
+            else
+            {
+                for (uint i = 0; i < header.EntryCount; i++)
+                    entries.Add(KesEntryInfo.Deserialize(reader));
+            }
 
             return (header, entries);
         }
@@ -234,8 +294,21 @@ namespace KesFile.Services
 
             stream.Seek(header.EntryTableOffset, SeekOrigin.Begin);
             var entries = new List<KesEntryInfo>((int)header.EntryCount);
-            for (uint i = 0; i < header.EntryCount; i++)
-                entries.Add(KesEntryInfo.Deserialize(reader));
+            if (header.HasEncryptedNames && encKey != null && hmacKey != null)
+            {
+                int sealedLen = reader.ReadInt32();
+                byte[] sealedTable = reader.ReadBytes(sealedLen);
+                byte[] tableBytes  = KesEncryptionService.Decrypt(sealedTable, encKey, hmacKey);
+                using var tms = new MemoryStream(tableBytes);
+                using var tr  = new BinaryReader(tms, System.Text.Encoding.UTF8, leaveOpen: true);
+                for (uint i = 0; i < header.EntryCount; i++)
+                    entries.Add(KesEntryInfo.Deserialize(tr));
+            }
+            else
+            {
+                for (uint i = 0; i < header.EntryCount; i++)
+                    entries.Add(KesEntryInfo.Deserialize(reader));
+            }
 
             for (int i = 0; i < entries.Count; i++)
             {
@@ -247,6 +320,110 @@ namespace KesFile.Services
             }
 
             OnProgress(entries.Count, entries.Count, "Done");
+        }
+
+        // ─── Verify (no extraction) ──────────────────────────────────────────
+
+        /// <summary>Result of an archive verification pass.</summary>
+        public class VerifyResult
+        {
+            public bool          Success           { get; set; }
+            public int           EntriesChecked    { get; set; }
+            public int           EntriesFailed     { get; set; }
+            public List<string>  FailedPaths       { get; } = new();
+            public string        Summary           { get; set; } = string.Empty;
+        }
+
+        /// <summary>
+        /// Verifies the integrity of every entry in <paramref name="archiveFile"/>
+        /// without writing anything to disk. For encrypted archives the HMAC of
+        /// every block is checked; when checksums are present the SHA-256 of the
+        /// decompressed content is compared against the entry table.
+        /// </summary>
+        public async Task<VerifyResult> VerifyArchiveAsync(
+            StorageFile       archiveFile,
+            string?           password,
+            CancellationToken ct = default)
+        {
+            var result = new VerifyResult();
+
+            using IRandomAccessStream ras    = await archiveFile.OpenReadAsync();
+            using Stream              stream = ras.AsStream();
+            using var reader = new BinaryReader(stream, System.Text.Encoding.UTF8, leaveOpen: true);
+
+            var header = KesHeader.Deserialize(reader);
+
+            byte[]? encKey  = null;
+            byte[]? hmacKey = null;
+            if (header.IsEncrypted)
+            {
+                var encBlock = KesEncryptionBlock.Deserialize(reader);
+                if (string.IsNullOrEmpty(password))
+                    throw new ArgumentException("Password required to verify this archive.");
+                (encKey, hmacKey) = KesEncryptionService.DeriveKeys(password!, encBlock.Salt);
+            }
+
+            stream.Seek(header.EntryTableOffset, SeekOrigin.Begin);
+            var entries = new List<KesEntryInfo>((int)header.EntryCount);
+            if (header.HasEncryptedNames && encKey != null && hmacKey != null)
+            {
+                int sealedLen = reader.ReadInt32();
+                byte[] sealedTable = reader.ReadBytes(sealedLen);
+                byte[] tableBytes  = KesEncryptionService.Decrypt(sealedTable, encKey, hmacKey);
+                using var tms = new MemoryStream(tableBytes);
+                using var tr  = new BinaryReader(tms, System.Text.Encoding.UTF8, leaveOpen: true);
+                for (uint i = 0; i < header.EntryCount; i++)
+                    entries.Add(KesEntryInfo.Deserialize(tr));
+            }
+            else
+            {
+                for (uint i = 0; i < header.EntryCount; i++)
+                    entries.Add(KesEntryInfo.Deserialize(reader));
+            }
+
+            for (int i = 0; i < entries.Count; i++)
+            {
+                ct.ThrowIfCancellationRequested();
+                var entry = entries[i];
+                OnProgress(i, entries.Count, entry.FileName);
+
+                try
+                {
+                    stream.Seek(entry.DataOffset, SeekOrigin.Begin);
+                    byte[] stored = new byte[entry.StoredSize];
+                    int read = 0;
+                    while (read < stored.Length)
+                    {
+                        int chunk = stream.Read(stored, read, stored.Length - read);
+                        if (chunk == 0) break;
+                        read += chunk;
+                    }
+                    byte[] compressed = (encKey != null && hmacKey != null)
+                        ? KesEncryptionService.Decrypt(stored, encKey, hmacKey)
+                        : stored;
+                    byte[] original   = _compressor.Decompress(compressed, entry.CompressionType, entry.OriginalSize);
+
+                    if (header.HasChecksums &&
+                        !KesEncryptionService.VerifySha256(original, entry.Sha256Hash))
+                    {
+                        result.EntriesFailed++;
+                        result.FailedPaths.Add(entry.Path + " (checksum mismatch)");
+                    }
+                    result.EntriesChecked++;
+                }
+                catch (Exception ex)
+                {
+                    result.EntriesFailed++;
+                    result.FailedPaths.Add(entry.Path + " (" + ex.GetType().Name + ": " + ex.Message + ")");
+                }
+            }
+
+            result.Success = result.EntriesFailed == 0;
+            result.Summary = result.Success
+                ? $"OK — {result.EntriesChecked}/{entries.Count} entries verified."
+                : $"FAILED — {result.EntriesFailed} of {entries.Count} entries are corrupt.";
+            OnProgress(entries.Count, entries.Count, "Done");
+            return result;
         }
 
         /// <summary>Extracts a single entry from an already-open stream.</summary>

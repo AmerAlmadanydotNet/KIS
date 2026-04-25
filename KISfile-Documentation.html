@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KIS file – User Guide</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font:16px/1.65 'Segoe UI',Tahoma,Verdana,sans-serif;color:#1a1a2e;background:#f5f7ff;padding:48px 20px}
+  .wrap{max-width:880px;margin:0 auto}
+  header{display:flex;align-items:center;gap:16px;margin-bottom:32px}
+  .logo{width:56px;height:56px;background:linear-gradient(135deg,#5064d4,#3a4ebc);border-radius:14px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:26px;font-weight:700;box-shadow:0 6px 18px rgba(80,100,212,.35)}
+  .brand{font-size:14px;color:#5064d4;font-weight:700;letter-spacing:.5px}
+  .sub{font-size:12px;color:#9ca3af}
+  .hero{background:linear-gradient(135deg,#5064d4,#3a4ebc);color:#fff;border-radius:20px;padding:36px 40px;margin-bottom:36px;box-shadow:0 12px 36px rgba(80,100,212,.25)}
+  .hero h1{font-size:30px;margin-bottom:10px}
+  .hero p{opacity:.92;font-size:15px}
+  .badge{display:inline-block;background:rgba(255,255,255,.18);border-radius:18px;padding:4px 14px;font-size:11px;font-weight:600;letter-spacing:1.2px;margin-top:12px}
+  h2{color:#3a4ebc;font-size:22px;margin:36px 0 14px;padding-bottom:8px;border-bottom:2px solid #e0e5f7}
+  h3{color:#1a1a2e;font-size:17px;margin:22px 0 8px}
+  p,li{color:#3a3a4e}
+  ul,ol{margin:8px 0 14px 24px}
+  li{margin-bottom:6px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin:14px 0}
+  .card{background:#fff;border:1px solid #e0e5f7;border-radius:14px;padding:18px}
+  .card .ic{font-size:22px;margin-bottom:8px}
+  .card h4{font-size:15px;color:#3a4ebc;margin-bottom:6px}
+  .card p{font-size:13.5px;color:#555}
+  table{width:100%;border-collapse:collapse;margin:14px 0;font-size:14px;background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+  th,td{text-align:left;padding:10px 14px;border-bottom:1px solid #eef0fb}
+  th{background:#eef0fb;color:#3a4ebc;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.5px}
+  tr:last-child td{border-bottom:none}
+  .ok{color:#0a8c4a;font-weight:700}
+  .bad{color:#c62828;font-weight:700}
+  code,pre{font-family:'Cascadia Code','Consolas',monospace}
+  code{background:#eef0fb;padding:1px 6px;border-radius:4px;font-size:13px;color:#3a4ebc}
+  pre{background:#1e1e2e;color:#f0f0f0;padding:14px 18px;border-radius:10px;overflow:auto;font-size:13px;line-height:1.55;margin:10px 0}
+  .note{background:#fff8e6;border-left:4px solid #f5b400;padding:12px 16px;border-radius:6px;margin:14px 0;font-size:14px}
+  .ok-box{background:#e8f7ee;border-left:4px solid #0a8c4a;padding:12px 16px;border-radius:6px;margin:14px 0;font-size:14px}
+  footer{margin-top:48px;text-align:center;font-size:12px;color:#9ca3af}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="logo">K</div>
+  <div>
+    <div class="brand">KIS file · KEEP IT SIMPLE</div>
+    <div class="sub">Modern, secure archive format for Windows · v1.0</div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="badge">USER GUIDE</div>
+  <h1>A modern alternative to the 1989 ZIP format</h1>
+  <p>KIS file (<code>.kes</code>) gives you smaller archives, real encryption, and full filename privacy — all from a clean Windows 10/11 app. This guide explains what KIS file is, how to use every feature, and why it is fundamentally safer than ZIP.</p>
+</section>
+
+<h2>1. What is KIS file?</h2>
+<p>KIS file is a Windows desktop application that creates and opens <code>.kes</code> archives. It was written from scratch in 2026 to fix the structural weaknesses of ZIP, which is now 36 years old. KIS file is a UWP app, signed and packaged as <code>.msix</code>, that runs on Windows 10 (1809+) and Windows 11.</p>
+
+<h2>2. Feature overview</h2>
+<div class="grid">
+  <div class="card"><div class="ic">📦</div><h4>LZMA compression</h4><p>30–50&nbsp;% smaller than ZIP&rsquo;s Deflate. Falls back to Deflate automatically when LZMA wouldn&rsquo;t help.</p></div>
+  <div class="card"><div class="ic">🔐</div><h4>AES-256 + HMAC</h4><p>Encrypt-then-MAC with AES-256-CBC and HMAC-SHA256. Tampering is detected before decryption.</p></div>
+  <div class="card"><div class="ic">🗝️</div><h4>PBKDF2 600 000 iterations</h4><p>Key stretching designed to make brute-force attacks impractical.</p></div>
+  <div class="card"><div class="ic">🙈</div><h4>Encrypted filenames</h4><p>Optional. The entire entry table is sealed — paths, sizes and timestamps are invisible without the password.</p></div>
+  <div class="card"><div class="ic">✅</div><h4>Per-file SHA-256</h4><p>Every file ships with a SHA-256 hash. Corruption is caught immediately.</p></div>
+  <div class="card"><div class="ic">🔍</div><h4>Verify without extracting</h4><p>The new <em>Verify</em> command checks every entry&rsquo;s HMAC and SHA-256 in place, without writing to disk.</p></div>
+  <div class="card"><div class="ic">💡</div><h4>Password hint</h4><p>Optional reminder stored next to the salt — never the password itself.</p></div>
+  <div class="card"><div class="ic">🪟</div><h4>Native Windows UI</h4><p>Modern Fluent NavigationView with drag-and-drop on the Home and Create pages.</p></div>
+</div>
+
+<h2>3. How KIS file compares to ZIP</h2>
+<table>
+  <thead><tr><th></th><th>ZIP (1989)</th><th>KIS file (2026)</th></tr></thead>
+  <tbody>
+    <tr><td>Compression</td><td>Deflate</td><td>LZMA (Deflate fallback)</td></tr>
+    <tr><td>Typical ratio vs raw</td><td>baseline</td><td class="ok">30–50 % smaller</td></tr>
+    <tr><td>Encryption algorithm</td><td>96-bit ZipCrypto</td><td class="ok">AES-256-CBC</td></tr>
+    <tr><td>Authentication</td><td class="bad">None</td><td class="ok">HMAC-SHA256 (Encrypt-then-MAC)</td></tr>
+    <tr><td>Key derivation</td><td>~1 iteration</td><td class="ok">PBKDF2-SHA256, 600 000 iters</td></tr>
+    <tr><td>Per-file integrity</td><td>CRC-32</td><td class="ok">SHA-256</td></tr>
+    <tr><td>Filename privacy</td><td class="bad">Always visible</td><td class="ok">Optional encrypted entry table</td></tr>
+  </tbody>
+</table>
+
+<h2>4. Using the application</h2>
+
+<h3>Create an archive</h3>
+<ol>
+  <li>Open KIS file and click <strong>Create</strong>.</li>
+  <li>Drag-and-drop files/folders onto the drop zone, or click <em>Add Files</em>.</li>
+  <li>Pick a <strong>compression algorithm</strong> (LZMA is recommended) and a <strong>speed</strong>.</li>
+  <li>(Optional) Tick <strong>Enable encryption</strong> and enter a strong password. You can also tick <strong>Encrypt filenames</strong> for full metadata privacy.</li>
+  <li>Click <strong>Create archive</strong>, choose a destination, done.</li>
+</ol>
+
+<h3>Open / extract</h3>
+<ol>
+  <li>Click <strong>Open</strong> and pick a <code>.kes</code> file (or drop it on the Home page).</li>
+  <li>If the archive is encrypted you&rsquo;ll be prompted for the password and shown the optional hint.</li>
+  <li>Browse the entry list, select what you want, then <em>Extract&nbsp;all</em> or <em>Extract selected</em>.</li>
+</ol>
+
+<h3>Verify (new in this build)</h3>
+<p>Use <em>Verify</em> on the Open page to confirm an archive is intact <strong>without extracting it</strong>. KIS file will:</p>
+<ul>
+  <li>Recompute the HMAC of every encrypted block.</li>
+  <li>Decompress every entry in memory.</li>
+  <li>Compare each result against the per-file SHA-256 in the entry table.</li>
+</ul>
+<p>You get a green <code>OK — N entries verified</code> or a red list of corrupted entries.</p>
+
+<div class="note"><strong>Tip:</strong> Run <em>Verify</em> after copying an archive over a flaky network or USB stick — it catches damage long before you&rsquo;d notice on extraction.</div>
+
+<h2>5. The <code>.kes</code> file format</h2>
+<pre>+----------------------------+  offset 0
+|  Header (56 B, &quot;KESF&quot; …)  |
++----------------------------+
+|  Encryption block          |  only if encrypted
+|    salt (32 B) + hint      |
++----------------------------+
+|  Per-file data blocks      |  IV(16) | HMAC(32) | LZMA/Deflate(ciphertext)
+|  …                         |
++----------------------------+
+|  Entry table               |  paths, sizes, offsets, SHA-256, type
+|  (sealed when              |  ↳ wrapped in AES+HMAC if EncryptFileNames=on
+|   EncryptFileNames=on)     |
++----------------------------+</pre>
+
+<h3>Why &ldquo;Encrypted filenames&rdquo; matters</h3>
+<p>In a password-protected ZIP, anyone can still see <em>tax-return-2025.pdf</em>, <em>passwords.kdbx</em>, or your folder layout. With KIS file&rsquo;s encrypted-filename mode the entire entry table is sealed with AES-256+HMAC, so the archive becomes an opaque blob: only the magic <code>KESF</code>, version, and total sizes are visible.</p>
+
+<h2>6. Recommended workflow</h2>
+<ul>
+  <li>Use <strong>LZMA</strong> + speed <strong>Normal</strong> for everyday archives.</li>
+  <li>Switch to <strong>Maximum</strong> only for cold storage; it uses a 32 MB dictionary and is markedly slower.</li>
+  <li>For sensitive data, always enable encryption <em>and</em> tick <strong>Encrypt filenames</strong>.</li>
+  <li>Use <strong>Verify</strong> after copying or downloading.</li>
+  <li>Pick passwords ≥ 12 chars; PBKDF2&rsquo;s 600&nbsp;000 iterations are strong but cannot rescue a 4-digit PIN.</li>
+</ul>
+
+<h2>7. Tested scenarios</h2>
+<p>Every shipping build is exercised by an automated round-trip test harness covering:</p>
+<table>
+  <thead><tr><th>#</th><th>Scenario</th><th>Result</th></tr></thead>
+  <tbody>
+    <tr><td>T1</td><td>Plaintext + Deflate</td><td class="ok">PASS</td></tr>
+    <tr><td>T2</td><td>Plaintext + LZMA</td><td class="ok">PASS</td></tr>
+    <tr><td>T3</td><td>AES-256 + Deflate</td><td class="ok">PASS</td></tr>
+    <tr><td>T4</td><td>AES-256 + LZMA</td><td class="ok">PASS</td></tr>
+    <tr><td>T5</td><td>AES-256 + LZMA + Encrypted filenames</td><td class="ok">PASS</td></tr>
+    <tr><td>N1</td><td>Wrong password is rejected (HMAC)</td><td class="ok">PASS</td></tr>
+    <tr><td>N2</td><td>One bit flipped → integrity error, no garbage written</td><td class="ok">PASS</td></tr>
+    <tr><td>N3</td><td>Filenames not visible in raw bytes when encrypted</td><td class="ok">PASS</td></tr>
+  </tbody>
+</table>
+
+<div class="ok-box"><strong>This build:</strong> 8 / 8 round-trip tests pass. UWP project compiles with 0 errors.</div>
+
+<h2>8. Installation</h2>
+<ol>
+  <li>Unzip <code>KISfile-Setup.zip</code>.</li>
+  <li>Right-click <code>Install.bat</code> → <em>Run as administrator</em> (only needed once to trust the developer certificate).</li>
+  <li>Launch <strong>KIS file</strong> from the Start menu.</li>
+</ol>
+
+<h2>9. Limitations &amp; roadmap</h2>
+<ul>
+  <li><strong>In-memory I/O.</strong> The current build reads each file fully into memory before compressing — fine for documents, but very large media files (multi-GB) should be split first.</li>
+  <li><strong>Split archives.</strong> The header reserves fields for multi-part archives; the writer for that mode is not yet wired to the UI.</li>
+  <li><strong>Streaming extraction.</strong> Planned: per-block streaming for files larger than 2 GB.</li>
+</ul>
+
+<footer>© 2026 KIS file — Keep It Simple. Built with C# / UWP / SharpCompress.</footer>
+</div>
+</body>
+</html>

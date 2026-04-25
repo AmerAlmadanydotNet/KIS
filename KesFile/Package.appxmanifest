@@ -14,8 +14,8 @@
   <mp:PhoneIdentity PhoneProductId="b9c3e4f2-7a1d-4e8f-a3c6-5d2b9e7f1a4c" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
-    <DisplayName>KIS file</DisplayName>
-    <PublisherDisplayName>KIS file</PublisherDisplayName>
+    <DisplayName>KIS</DisplayName>
+    <PublisherDisplayName>KIS</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
 
@@ -32,23 +32,24 @@
       Executable="$targetnametoken$.exe"
       EntryPoint="KesFile.App">
       <uap:VisualElements
-        DisplayName="KIS file"
+        DisplayName="KIS"
         Square150x150Logo="Assets\Square150x150Logo.png"
         Square44x44Logo="Assets\Square44x44Logo.png"
-        Description="KIS file - Advanced Secure Archive Manager"
+        Description="KIS - Modern Secure Archive Manager"
         BackgroundColor="transparent">
         <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" />
         <uap:SplashScreen Image="Assets\SplashScreen.png" />
         <uap:LockScreen Notification="badge" BadgeLogo="Assets\LockScreenLogo.png" />
       </uap:VisualElements>
       <Extensions>
-        <!-- Associate .kes file extension -->
+        <!-- Associate .kis (and legacy .kes) file extensions -->
         <uap:Extension Category="windows.fileTypeAssociation">
-          <uap:FileTypeAssociation Name="kesfile">
+          <uap:FileTypeAssociation Name="kisfile">
             <uap:SupportedFileTypes>
+              <uap:FileType>.kis</uap:FileType>
               <uap:FileType>.kes</uap:FileType>
             </uap:SupportedFileTypes>
-            <uap:DisplayName>KIS file Archive</uap:DisplayName>
+            <uap:DisplayName>KIS Archive</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
       </Extensions>

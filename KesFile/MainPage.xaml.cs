@@ -57,6 +57,7 @@ namespace KesFile
                     "home"   => typeof(HomePage),
                     "create" => typeof(CreatePage),
                     "open"   => typeof(OpenPage),
+                    "about"  => typeof(AboutPage),
                     _        => null
                 };
 

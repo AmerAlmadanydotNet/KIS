@@ -16,15 +16,32 @@ namespace KesFile.Services
 
         public byte[] Compress(byte[] data, KesCompressionType type, CompressionSpeed speed = CompressionSpeed.Normal)
         {
-            if (data == null || data.Length == 0) return Array.Empty<byte>();
+            return CompressWithActualType(data, type, speed).Bytes;
+        }
 
-            return type switch
+        /// <summary>
+        /// Compresses <paramref name="data"/> and returns both the bytes and the
+        /// compression algorithm that was actually applied. The actual algorithm may
+        /// differ from the requested one when LZMA falls back to Deflate (e.g. the
+        /// LZMA result was larger than the input or SharpCompress threw).
+        /// </summary>
+        public (byte[] Bytes, KesCompressionType ActualType) CompressWithActualType(
+            byte[] data, KesCompressionType type, CompressionSpeed speed = CompressionSpeed.Normal)
+        {
+            if (data == null || data.Length == 0)
+                return (Array.Empty<byte>(), KesCompressionType.None);
+
+            switch (type)
             {
-                KesCompressionType.None    => data,
-                KesCompressionType.Deflate => CompressDeflate(data, speed),
-                KesCompressionType.Lzma    => CompressLzma(data, speed),
-                _                          => data
-            };
+                case KesCompressionType.None:
+                    return (data, KesCompressionType.None);
+                case KesCompressionType.Deflate:
+                    return (CompressDeflate(data, speed), KesCompressionType.Deflate);
+                case KesCompressionType.Lzma:
+                    return CompressLzmaWithActualType(data, speed);
+                default:
+                    return (data, KesCompressionType.None);
+            }
         }
 
         public byte[] Decompress(byte[] data, KesCompressionType type, ulong originalSize)
@@ -77,7 +94,7 @@ namespace KesFile.Services
 
         // ─── LZMA ────────────────────────────────────────────────────────────
 
-        private static byte[] CompressLzma(byte[] data, CompressionSpeed speed)
+        private static (byte[] Bytes, KesCompressionType ActualType) CompressLzmaWithActualType(byte[] data, CompressionSpeed speed)
         {
             try
             {
@@ -101,13 +118,15 @@ namespace KesFile.Services
                 Buffer.BlockCopy(propertyBytes, 0, compressed, 0, propertyBytes.Length);
                 Buffer.BlockCopy(payload, 0, compressed, propertyBytes.Length, payload.Length);
 
-                // Only use LZMA result if it is actually smaller
-                return compressed.Length < data.Length ? compressed : CompressDeflate(data, speed);
+                // Only use LZMA result if it is actually smaller; otherwise fall back to Deflate.
+                if (compressed.Length < data.Length)
+                    return (compressed, KesCompressionType.Lzma);
+                return (CompressDeflate(data, speed), KesCompressionType.Deflate);
             }
             catch
             {
                 // Fall back to Deflate if SharpCompress is unavailable or throws
-                return CompressDeflate(data, speed);
+                return (CompressDeflate(data, speed), KesCompressionType.Deflate);
             }
         }
 

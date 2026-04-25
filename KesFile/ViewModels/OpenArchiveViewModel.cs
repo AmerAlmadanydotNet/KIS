@@ -110,6 +110,7 @@ namespace KesFile.ViewModels
                 ViewMode               = PickerViewMode.List,
                 SuggestedStartLocation = PickerLocationId.Desktop
             };
+            picker.FileTypeFilter.Add(".kis");
             picker.FileTypeFilter.Add(".kes");
             picker.FileTypeFilter.Add("*");
 
@@ -125,18 +126,28 @@ namespace KesFile.ViewModels
             ArchiveName  = file.Name;
             Entries.Clear();
             StatusMessage = string.Empty;
+            IsEncrypted   = false;
+            PasswordHint  = string.Empty;
+            Password      = string.Empty;
 
             try
             {
-                // First pass: read header to check if encrypted
-                var (hdr, entries) = await _service.OpenArchiveAsync(file, null);
-                _header     = hdr;
-                IsEncrypted = hdr.IsEncrypted;
+                // Peek first — this never throws for encrypted archives.
+                var (peekHeader, hint) = await _service.PeekArchiveAsync(file);
+                _header      = peekHeader;
+                IsEncrypted  = peekHeader.IsEncrypted;
+                PasswordHint = hint;
 
                 if (!IsEncrypted)
+                {
+                    var (hdr, entries) = await _service.OpenArchiveAsync(file, null);
+                    _header = hdr;
                     PopulateEntries(hdr, entries);
+                }
                 else
+                {
                     StatusMessage = "Archive is encrypted. Enter the password and click Unlock.";
+                }
 
                 return true;
             }

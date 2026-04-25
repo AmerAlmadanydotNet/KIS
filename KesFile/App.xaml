@@ -2,11 +2,74 @@
     x:Class="KesFile.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:conv="using:KesFile.Converters"
-    RequestedTheme="Light">
+    xmlns:conv="using:KesFile.Converters">
 
     <Application.Resources>
         <ResourceDictionary>
+
+            <!-- ─── Theme-aware brushes (must come first) ──────────────────── -->
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Light">
+                    <SolidColorBrush x:Key="PageBackgroundBrush"        Color="#F5F7FF"/>
+                    <SolidColorBrush x:Key="CardBackgroundBrush"        Color="#FFFFFF"/>
+                    <SolidColorBrush x:Key="CardBorderBrush"            Color="#E5E7EB"/>
+                    <SolidColorBrush x:Key="CardForegroundBrush"        Color="#1A1A2E"/>
+                    <SolidColorBrush x:Key="CardSubtleForegroundBrush"  Color="#4B5563"/>
+                    <SolidColorBrush x:Key="CardMutedForegroundBrush"   Color="#6B7280"/>
+                    <SolidColorBrush x:Key="CardFaintForegroundBrush"   Color="#9CA3AF"/>
+                    <SolidColorBrush x:Key="HeaderRowBackgroundBrush"   Color="#F4F6FB"/>
+                    <SolidColorBrush x:Key="DropZoneBackgroundBrush"    Color="#EEF1FB"/>
+                    <SolidColorBrush x:Key="DropZoneBorderBrush"        Color="#C7D2FE"/>
+                    <SolidColorBrush x:Key="InfoBannerBackgroundBrush"  Color="#F0F7FF"/>
+                    <SolidColorBrush x:Key="InfoBannerBorderBrush"      Color="#BAD0F8"/>
+                    <SolidColorBrush x:Key="WarnBannerBackgroundBrush"  Color="#FFF8F0"/>
+                    <SolidColorBrush x:Key="WarnBannerBorderBrush"      Color="#FBD38D"/>
+                    <SolidColorBrush x:Key="WarnBannerForegroundBrush"  Color="#92400E"/>
+                    <SolidColorBrush x:Key="WarnBannerSubtleBrush"      Color="#B45309"/>
+                    <SolidColorBrush x:Key="WarnBannerIconBrush"        Color="#D97706"/>
+                    <SolidColorBrush x:Key="AccentSoftBackgroundBrush"  Color="#F8FAFF"/>
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="Dark">
+                    <SolidColorBrush x:Key="PageBackgroundBrush"        Color="#0F1119"/>
+                    <SolidColorBrush x:Key="CardBackgroundBrush"        Color="#1A1D2A"/>
+                    <SolidColorBrush x:Key="CardBorderBrush"            Color="#2A2F3F"/>
+                    <SolidColorBrush x:Key="CardForegroundBrush"        Color="#F1F2F8"/>
+                    <SolidColorBrush x:Key="CardSubtleForegroundBrush"  Color="#B6BCCB"/>
+                    <SolidColorBrush x:Key="CardMutedForegroundBrush"   Color="#8E95A8"/>
+                    <SolidColorBrush x:Key="CardFaintForegroundBrush"   Color="#6B7286"/>
+                    <SolidColorBrush x:Key="HeaderRowBackgroundBrush"   Color="#222636"/>
+                    <SolidColorBrush x:Key="DropZoneBackgroundBrush"    Color="#1F2436"/>
+                    <SolidColorBrush x:Key="DropZoneBorderBrush"        Color="#3A4476"/>
+                    <SolidColorBrush x:Key="InfoBannerBackgroundBrush"  Color="#15263A"/>
+                    <SolidColorBrush x:Key="InfoBannerBorderBrush"      Color="#2C4673"/>
+                    <SolidColorBrush x:Key="WarnBannerBackgroundBrush"  Color="#2A2014"/>
+                    <SolidColorBrush x:Key="WarnBannerBorderBrush"      Color="#6E5025"/>
+                    <SolidColorBrush x:Key="WarnBannerForegroundBrush"  Color="#FBC97A"/>
+                    <SolidColorBrush x:Key="WarnBannerSubtleBrush"      Color="#E8A85B"/>
+                    <SolidColorBrush x:Key="WarnBannerIconBrush"        Color="#F2A23A"/>
+                    <SolidColorBrush x:Key="AccentSoftBackgroundBrush"  Color="#1B1F35"/>
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="HighContrast">
+                    <SolidColorBrush x:Key="PageBackgroundBrush"        Color="{ThemeResource SystemColorWindowColor}"/>
+                    <SolidColorBrush x:Key="CardBackgroundBrush"        Color="{ThemeResource SystemColorWindowColor}"/>
+                    <SolidColorBrush x:Key="CardBorderBrush"            Color="{ThemeResource SystemColorWindowTextColor}"/>
+                    <SolidColorBrush x:Key="CardForegroundBrush"        Color="{ThemeResource SystemColorWindowTextColor}"/>
+                    <SolidColorBrush x:Key="CardSubtleForegroundBrush"  Color="{ThemeResource SystemColorWindowTextColor}"/>
+                    <SolidColorBrush x:Key="CardMutedForegroundBrush"   Color="{ThemeResource SystemColorGrayTextColor}"/>
+                    <SolidColorBrush x:Key="CardFaintForegroundBrush"   Color="{ThemeResource SystemColorGrayTextColor}"/>
+                    <SolidColorBrush x:Key="HeaderRowBackgroundBrush"   Color="{ThemeResource SystemColorWindowColor}"/>
+                    <SolidColorBrush x:Key="DropZoneBackgroundBrush"    Color="{ThemeResource SystemColorWindowColor}"/>
+                    <SolidColorBrush x:Key="DropZoneBorderBrush"        Color="{ThemeResource SystemColorWindowTextColor}"/>
+                    <SolidColorBrush x:Key="InfoBannerBackgroundBrush"  Color="{ThemeResource SystemColorWindowColor}"/>
+                    <SolidColorBrush x:Key="InfoBannerBorderBrush"      Color="{ThemeResource SystemColorWindowTextColor}"/>
+                    <SolidColorBrush x:Key="WarnBannerBackgroundBrush"  Color="{ThemeResource SystemColorWindowColor}"/>
+                    <SolidColorBrush x:Key="WarnBannerBorderBrush"      Color="{ThemeResource SystemColorWindowTextColor}"/>
+                    <SolidColorBrush x:Key="WarnBannerForegroundBrush"  Color="{ThemeResource SystemColorWindowTextColor}"/>
+                    <SolidColorBrush x:Key="WarnBannerSubtleBrush"      Color="{ThemeResource SystemColorWindowTextColor}"/>
+                    <SolidColorBrush x:Key="WarnBannerIconBrush"        Color="{ThemeResource SystemColorWindowTextColor}"/>
+                    <SolidColorBrush x:Key="AccentSoftBackgroundBrush"  Color="{ThemeResource SystemColorWindowColor}"/>
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
 
             <!-- ─── Converters ─────────────────────────────────────────────── -->
             <conv:BoolToVisibilityConverter        x:Key="BoolToVisibleConverter"/>
@@ -18,9 +81,6 @@
 
             <!-- ─── App accent colour (blue) ──────────────────────────────── -->
             <SolidColorBrush x:Key="AppAccentBrush" Color="#5064D4"/>
-
-            <!-- ─── Page background ────────────────────────────────────────── -->
-            <SolidColorBrush x:Key="PageBackgroundBrush" Color="#F5F7FF"/>
 
             <!-- ─── Accent button style (self-contained, no WinUI2 needed) ── -->
             <Style x:Key="AccentButtonStyle" TargetType="Button">

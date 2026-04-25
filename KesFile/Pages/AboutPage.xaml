@@ -1,0 +1,228 @@
+﻿<Page
+    x:Class="KesFile.Pages.AboutPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="40,32,40,40" Spacing="24" MaxWidth="900" HorizontalAlignment="Stretch">
+
+            <!-- Hero -->
+            <Border CornerRadius="16" Padding="36,32">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#5064D4" Offset="0"/>
+                        <GradientStop Color="{ThemeResource AppAccentBrush}" Offset="1"/>
+                    </LinearGradientBrush>
+                </Border.Background>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Border Grid.Column="0" Width="78" Height="78" CornerRadius="20"
+                            Background="#FFFFFF22" Margin="0,0,24,0" VerticalAlignment="Center">
+                        <TextBlock Text="K" Foreground="White" FontSize="42" FontWeight="Bold"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <StackPanel Grid.Column="1" Spacing="8" VerticalAlignment="Center">
+                        <TextBlock Text="KIS" Foreground="White"
+                                   FontSize="36" FontWeight="Bold"/>
+                        <TextBlock Text="Keep It Simple — modern, secure archive format"
+                                   Foreground="#E0E5F7" FontSize="15"/>
+                        <TextBlock Text="Version 1.0.0  ·  Built April 2026"
+                                   Foreground="#C7D2FE" FontSize="12"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- What is KIS -->
+            <Border Background="{ThemeResource CardBackgroundBrush}" CornerRadius="12"
+                    BorderBrush="{ThemeResource CardBorderBrush}" BorderThickness="1" Padding="28,24">
+                <StackPanel Spacing="10">
+                    <TextBlock Text="What is KIS?" FontSize="18" FontWeight="SemiBold" Foreground="{ThemeResource CardForegroundBrush}"/>
+                    <TextBlock TextWrapping="Wrap" Foreground="{ThemeResource CardSubtleForegroundBrush}" FontSize="14" LineHeight="22">
+                        <Run Text="ZIP was created in 1989 — back when floppy disks were the primary storage medium and encryption was barely an afterthought. For over 30 years it has been the default simply because it is everywhere, not because it is good."/>
+                        <LineBreak/><LineBreak/>
+                        <Run Text="KIS was built from the ground up to fix every weakness ZIP has: smaller archives, real encryption that withstands modern attacks, and an interface that is genuinely pleasant to use."/>
+                    </TextBlock>
+                </StackPanel>
+            </Border>
+
+            <!-- Features -->
+            <Border Background="{ThemeResource CardBackgroundBrush}" CornerRadius="12"
+                    BorderBrush="{ThemeResource CardBorderBrush}" BorderThickness="1" Padding="28,24">
+                <StackPanel Spacing="14">
+                    <TextBlock Text="Features" FontSize="18" FontWeight="SemiBold" Foreground="{ThemeResource CardForegroundBrush}"/>
+
+                    <Grid ColumnSpacing="20" RowSpacing="14">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <StackPanel Grid.Row="0" Grid.Column="0" Spacing="4">
+                            <TextBlock Text="📦  LZMA compression" FontWeight="SemiBold" Foreground="{ThemeResource CardForegroundBrush}"/>
+                            <TextBlock Text="30–50% smaller than ZIP's Deflate. Auto-falls back to Deflate when LZMA wouldn't help."
+                                       TextWrapping="Wrap" Foreground="{ThemeResource CardMutedForegroundBrush}" FontSize="13"/>
+                        </StackPanel>
+                        <StackPanel Grid.Row="0" Grid.Column="1" Spacing="4">
+                            <TextBlock Text="🔐  AES-256 + HMAC-SHA256" FontWeight="SemiBold" Foreground="{ThemeResource CardForegroundBrush}"/>
+                            <TextBlock Text="Encrypt-then-MAC authentication. Tampering is detected before decryption."
+                                       TextWrapping="Wrap" Foreground="{ThemeResource CardMutedForegroundBrush}" FontSize="13"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="1" Grid.Column="0" Spacing="4">
+                            <TextBlock Text="🗝️  PBKDF2 600 000 iterations" FontWeight="SemiBold" Foreground="{ThemeResource CardForegroundBrush}"/>
+                            <TextBlock Text="Key stretching designed to make brute-force attacks impractical."
+                                       TextWrapping="Wrap" Foreground="{ThemeResource CardMutedForegroundBrush}" FontSize="13"/>
+                        </StackPanel>
+                        <StackPanel Grid.Row="1" Grid.Column="1" Spacing="4">
+                            <TextBlock Text="🙈  Encrypted filenames" FontWeight="SemiBold" Foreground="{ThemeResource CardForegroundBrush}"/>
+                            <TextBlock Text="Optional. The entire entry table is sealed — paths, sizes and timestamps are invisible."
+                                       TextWrapping="Wrap" Foreground="{ThemeResource CardMutedForegroundBrush}" FontSize="13"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="2" Grid.Column="0" Spacing="4">
+                            <TextBlock Text="✅  Per-file SHA-256" FontWeight="SemiBold" Foreground="{ThemeResource CardForegroundBrush}"/>
+                            <TextBlock Text="Every entry carries its own SHA-256 hash. Corruption is caught immediately."
+                                       TextWrapping="Wrap" Foreground="{ThemeResource CardMutedForegroundBrush}" FontSize="13"/>
+                        </StackPanel>
+                        <StackPanel Grid.Row="2" Grid.Column="1" Spacing="4">
+                            <TextBlock Text="🔍  Verify without extracting" FontWeight="SemiBold" Foreground="{ThemeResource CardForegroundBrush}"/>
+                            <TextBlock Text="Check HMAC and SHA-256 of every entry in place — no disk writes."
+                                       TextWrapping="Wrap" Foreground="{ThemeResource CardMutedForegroundBrush}" FontSize="13"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="3" Grid.Column="0" Spacing="4">
+                            <TextBlock Text="💡  Password hint" FontWeight="SemiBold" Foreground="{ThemeResource CardForegroundBrush}"/>
+                            <TextBlock Text="Optional reminder stored next to the salt — never the password itself."
+                                       TextWrapping="Wrap" Foreground="{ThemeResource CardMutedForegroundBrush}" FontSize="13"/>
+                        </StackPanel>
+                        <StackPanel Grid.Row="3" Grid.Column="1" Spacing="4">
+                            <TextBlock Text="🪟  Native Windows UI" FontWeight="SemiBold" Foreground="{ThemeResource CardForegroundBrush}"/>
+                            <TextBlock Text="Modern Fluent design with drag-and-drop on Home and Create pages."
+                                       TextWrapping="Wrap" Foreground="{ThemeResource CardMutedForegroundBrush}" FontSize="13"/>
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- Comparison vs ZIP -->
+            <Border Background="{ThemeResource CardBackgroundBrush}" CornerRadius="12"
+                    BorderBrush="{ThemeResource CardBorderBrush}" BorderThickness="1" Padding="28,24">
+                <StackPanel Spacing="12">
+                    <TextBlock Text="Why KIS instead of ZIP?" FontSize="18" FontWeight="SemiBold" Foreground="{ThemeResource CardForegroundBrush}"/>
+                    <Grid ColumnSpacing="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <Border Grid.Row="0" Grid.ColumnSpan="3" Background="{ThemeResource HeaderRowBackgroundBrush}" Padding="14,10">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text=""        Foreground="{ThemeResource AppAccentBrush}" FontWeight="SemiBold" FontSize="12"/>
+                                <TextBlock Grid.Column="1" Text="ZIP (1989)"  Foreground="{ThemeResource AppAccentBrush}" FontWeight="SemiBold" FontSize="12"/>
+                                <TextBlock Grid.Column="2" Text="KIS (2026)"  Foreground="{ThemeResource AppAccentBrush}" FontWeight="SemiBold" FontSize="12"/>
+                            </Grid>
+                        </Border>
+
+                        <TextBlock Grid.Row="1" Grid.Column="0" Padding="14,8" Text="Compression"        Foreground="{ThemeResource CardSubtleForegroundBrush}" FontSize="13"/>
+                        <TextBlock Grid.Row="1" Grid.Column="1" Padding="14,8" Text="Deflate"            Foreground="{ThemeResource CardSubtleForegroundBrush}" FontSize="13"/>
+                        <TextBlock Grid.Row="1" Grid.Column="2" Padding="14,8" Text="LZMA + Deflate"     Foreground="#10B981" FontSize="13" FontWeight="SemiBold"/>
+
+                        <TextBlock Grid.Row="2" Grid.Column="0" Padding="14,8" Text="Encryption"         Foreground="{ThemeResource CardSubtleForegroundBrush}" FontSize="13"/>
+                        <TextBlock Grid.Row="2" Grid.Column="1" Padding="14,8" Text="96-bit ZipCrypto"   Foreground="#EF4444" FontSize="13"/>
+                        <TextBlock Grid.Row="2" Grid.Column="2" Padding="14,8" Text="AES-256-CBC"        Foreground="#10B981" FontSize="13" FontWeight="SemiBold"/>
+
+                        <TextBlock Grid.Row="3" Grid.Column="0" Padding="14,8" Text="Authentication"     Foreground="{ThemeResource CardSubtleForegroundBrush}" FontSize="13"/>
+                        <TextBlock Grid.Row="3" Grid.Column="1" Padding="14,8" Text="None"               Foreground="#EF4444" FontSize="13"/>
+                        <TextBlock Grid.Row="3" Grid.Column="2" Padding="14,8" Text="HMAC-SHA256"        Foreground="#10B981" FontSize="13" FontWeight="SemiBold"/>
+
+                        <TextBlock Grid.Row="4" Grid.Column="0" Padding="14,8" Text="Key derivation"     Foreground="{ThemeResource CardSubtleForegroundBrush}" FontSize="13"/>
+                        <TextBlock Grid.Row="4" Grid.Column="1" Padding="14,8" Text="~1 iteration"       Foreground="#EF4444" FontSize="13"/>
+                        <TextBlock Grid.Row="4" Grid.Column="2" Padding="14,8" Text="PBKDF2-SHA256, 600 000" Foreground="#10B981" FontSize="13" FontWeight="SemiBold"/>
+
+                        <TextBlock Grid.Row="5" Grid.Column="0" Padding="14,8" Text="Per-file integrity" Foreground="{ThemeResource CardSubtleForegroundBrush}" FontSize="13"/>
+                        <TextBlock Grid.Row="5" Grid.Column="1" Padding="14,8" Text="CRC-32"             Foreground="{ThemeResource CardSubtleForegroundBrush}" FontSize="13"/>
+                        <TextBlock Grid.Row="5" Grid.Column="2" Padding="14,8" Text="SHA-256"            Foreground="#10B981" FontSize="13" FontWeight="SemiBold"/>
+
+                        <TextBlock Grid.Row="6" Grid.Column="0" Padding="14,8" Text="Filename privacy"   Foreground="{ThemeResource CardSubtleForegroundBrush}" FontSize="13"/>
+                        <TextBlock Grid.Row="6" Grid.Column="1" Padding="14,8" Text="Always visible"     Foreground="#EF4444" FontSize="13"/>
+                        <TextBlock Grid.Row="6" Grid.Column="2" Padding="14,8" Text="Encrypted (optional)" Foreground="#10B981" FontSize="13" FontWeight="SemiBold"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- File format -->
+            <Border Background="{ThemeResource CardBackgroundBrush}" CornerRadius="12"
+                    BorderBrush="{ThemeResource CardBorderBrush}" BorderThickness="1" Padding="28,24">
+                <StackPanel Spacing="10">
+                    <TextBlock Text="The .kis file format" FontSize="18" FontWeight="SemiBold" Foreground="{ThemeResource CardForegroundBrush}"/>
+                    <TextBlock TextWrapping="Wrap" Foreground="{ThemeResource CardSubtleForegroundBrush}" FontSize="14" LineHeight="22">
+                        <Run Text="Every archive starts with a 56-byte header (magic 'KESF', version, flags, totals). When encryption is on, a salt + optional hint follows. Each file is stored as a block of "/>
+                        <Run Text="IV(16) + HMAC(32) + ciphertext" FontFamily="Consolas"/>
+                        <Run Text=", and the entry table at the end lists paths, sizes, offsets and per-file SHA-256 hashes. With "/>
+                        <Run Text="Encrypted filenames" FontWeight="SemiBold"/>
+                        <Run Text=" enabled, that entire table is also sealed with AES+HMAC, so the archive becomes a fully opaque blob."/>
+                    </TextBlock>
+                </StackPanel>
+            </Border>
+
+            <!-- Feedback -->
+            <Border CornerRadius="12" Padding="28,24"
+                    BorderBrush="{ThemeResource DropZoneBorderBrush}" BorderThickness="1" Background="{ThemeResource AccentSoftBackgroundBrush}">
+                <StackPanel Spacing="10">
+                    <TextBlock Text="Feedback" FontSize="18" FontWeight="SemiBold" Foreground="{ThemeResource CardForegroundBrush}"/>
+                    <TextBlock TextWrapping="Wrap" Foreground="{ThemeResource CardSubtleForegroundBrush}" FontSize="14" LineHeight="22"
+                               Text="Found a bug, have a feature request, or just want to say hi? I would love to hear from you."/>
+                    <Grid ColumnSpacing="10" Margin="0,4,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <FontIcon Grid.Column="0" Glyph="&#xE715;" FontSize="18" Foreground="#5064D4"
+                                  VerticalAlignment="Center"/>
+                        <HyperlinkButton Grid.Column="1"
+                                         Content="kisfile.feedback@protonmail.com"
+                                         Click="Email_Click"
+                                         Padding="6,2"
+                                         FontSize="14"/>
+                    </Grid>
+                    <TextBlock Foreground="{ThemeResource CardFaintForegroundBrush}" FontSize="12"
+                               Text="Please include your Windows version and a description of the steps to reproduce any bug."/>
+                </StackPanel>
+            </Border>
+
+            <!-- Credits -->
+            <TextBlock Text="© 2026 KIS · Keep It Simple · Built with C# / UWP / SharpCompress"
+                       Foreground="{ThemeResource CardFaintForegroundBrush}" FontSize="12" HorizontalAlignment="Center"
+                       Margin="0,8,0,16"/>
+        </StackPanel>
+    </ScrollViewer>
+</Page>

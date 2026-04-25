@@ -169,12 +169,24 @@ namespace KesFile.ViewModels
                 return false;
             }
 
+            // Default archive name comes from the first added item.
+            string suggestedName = "Archive";
+            var firstItem = FilesToCompress[0];
+            if (firstItem is IStorageItem storageItem && !string.IsNullOrEmpty(storageItem.Name))
+            {
+                suggestedName = storageItem is StorageFile sf
+                    ? System.IO.Path.GetFileNameWithoutExtension(sf.Name)
+                    : storageItem.Name;
+                if (string.IsNullOrWhiteSpace(suggestedName))
+                    suggestedName = "Archive";
+            }
+
             var savePicker = new FileSavePicker
             {
                 SuggestedStartLocation = PickerLocationId.Desktop,
-                SuggestedFileName      = "Archive"
+                SuggestedFileName      = suggestedName
             };
-            savePicker.FileTypeChoices.Add("KesFile Archive", new List<string> { ".kes" });
+            savePicker.FileTypeChoices.Add("KIS Archive", new List<string> { ".kis" });
 
             StorageFile? destFile = await savePicker.PickSaveFileAsync();
             if (destFile == null) return false;
