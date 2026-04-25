@@ -46,15 +46,9 @@
             <NavigationView.PaneHeader>
                 <Border Padding="4,10,12,10">
                     <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-                        <Border Width="32" Height="32" CornerRadius="8"
-                                Background="#5064D4"
-                                VerticalAlignment="Center">
-                            <TextBlock Text="K"
-                                       Foreground="White"
-                                       FontSize="18" FontWeight="Bold"
-                                       HorizontalAlignment="Center"
-                                       VerticalAlignment="Center"/>
-                        </Border>
+                        <Image Source="ms-appx:///Assets/KisFileIcon.png"
+                               Width="32" Height="32"
+                               VerticalAlignment="Center"/>
                         <TextBlock Text="KIS"
                                    FontSize="24" FontWeight="Bold"
                                    Foreground="#5064D4"

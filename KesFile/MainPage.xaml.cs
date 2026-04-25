@@ -11,6 +11,7 @@ namespace KesFile
     public sealed partial class MainPage : Page
     {
         private readonly MainViewModel _vm = new();
+        private StorageFile? _pendingFile;
 
         public MainPage()
         {
@@ -21,9 +22,10 @@ namespace KesFile
         {
             base.OnNavigatedTo(e);
 
-            // If launched via file association, open the archive
+            // If launched via file association, remember it so NavView_Loaded
+            // navigates to OpenPage instead of HomePage on the very first run.
             if (e.Parameter is StorageFile file)
-                OpenArchiveFile(file);
+                _pendingFile = file;
         }
 
         public void OpenArchiveFile(StorageFile? file)
@@ -35,6 +37,14 @@ namespace KesFile
 
         private void NavView_Loaded(object sender, RoutedEventArgs e)
         {
+            if (_pendingFile != null)
+            {
+                var f = _pendingFile;
+                _pendingFile = null;
+                OpenArchiveFile(f);
+                return;
+            }
+
             // Select Home by default
             NavView.SelectedItem = NavView.MenuItems[0];
             ContentFrame.Navigate(typeof(HomePage));

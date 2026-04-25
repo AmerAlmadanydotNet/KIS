@@ -50,6 +50,7 @@
               <uap:FileType>.kes</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>KIS Archive</uap:DisplayName>
+            <uap:Logo>Assets\KisFileIcon.png</uap:Logo>
           </uap:FileTypeAssociation>
         </uap:Extension>
       </Extensions>

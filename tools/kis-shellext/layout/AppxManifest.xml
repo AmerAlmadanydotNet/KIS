@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Package
+  xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+  xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+  xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3"
+  xmlns:uap10="http://schemas.microsoft.com/appx/manifest/uap/windows10/10"
+  xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+  xmlns:com="http://schemas.microsoft.com/appx/manifest/com/windows10"
+  xmlns:desktop4="http://schemas.microsoft.com/appx/manifest/desktop/windows10/4"
+  xmlns:desktop5="http://schemas.microsoft.com/appx/manifest/desktop/windows10/5"
+  IgnorableNamespaces="uap uap3 uap10 rescap com desktop4 desktop5">
+
+  <Identity Name="KIS.ShellExt"
+            Publisher="CN=KIS"
+            Version="1.0.0.0"
+            ProcessorArchitecture="x64" />
+
+  <Properties>
+    <DisplayName>KIS Shell Extension</DisplayName>
+    <PublisherDisplayName>KIS</PublisherDisplayName>
+    <Logo>Assets\StoreLogo.png</Logo>
+  </Properties>
+
+  <Resources>
+    <Resource Language="en-us" />
+  </Resources>
+
+  <Dependencies>
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.22000.0" MaxVersionTested="10.0.26100.0" />
+  </Dependencies>
+
+  <Capabilities>
+    <rescap:Capability Name="runFullTrust" />
+  </Capabilities>
+
+  <Applications>
+    <Application Id="KisShellExt"
+                 Executable="kis.exe"
+                 uap10:TrustLevel="mediumIL"
+                 uap10:RuntimeBehavior="win32App">
+      <uap:VisualElements
+        DisplayName="KIS Shell Extension"
+        Description="Top-level KIS commands in Windows Explorer"
+        BackgroundColor="transparent"
+        Square150x150Logo="Assets\Square150x150Logo.png"
+        Square44x44Logo="Assets\Square44x44Logo.png"
+        AppListEntry="none">
+      </uap:VisualElements>
+
+      <Extensions>
+        <!-- COM server: maps the IExplorerCommand class GUIDs to the comhost DLL -->
+        <com:Extension Category="windows.comServer">
+          <com:ComServer>
+            <com:SurrogateServer DisplayName="KIS Shell Extension">
+              <com:Class Id="3D1B7E11-1234-4000-9C0A-2A0B0E1F0000" Path="KIS.ShellExt.dll" ThreadingModel="STA" />
+            </com:SurrogateServer>
+          </com:ComServer>
+        </com:Extension>
+
+        <!-- Top-level "KIS" entry on every file/folder, plus on .kis archives.
+             Type="*" matches any file; "Directory" matches folders. -->
+        <desktop4:Extension Category="windows.fileExplorerContextMenus">
+          <desktop4:FileExplorerContextMenus>
+            <desktop5:ItemType Type="*">
+              <desktop5:Verb Id="KisRoot" Clsid="3D1B7E11-1234-4000-9C0A-2A0B0E1F0000" />
+            </desktop5:ItemType>
+            <desktop5:ItemType Type="Directory">
+              <desktop5:Verb Id="KisRoot" Clsid="3D1B7E11-1234-4000-9C0A-2A0B0E1F0000" />
+            </desktop5:ItemType>
+          </desktop4:FileExplorerContextMenus>
+        </desktop4:Extension>
+
+        <!-- File-type association: registers the KIS icon for every .kis / .kes
+             file in Explorer.  Activation invokes kis.exe (CLI) which prints
+             the archive info; the UWP app remains the preferred opener once
+             installed. -->
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="kisarchive">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.kis</uap:FileType>
+              <uap:FileType>.kes</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>KIS Archive</uap:DisplayName>
+            <uap:Logo>Assets\KisFileIcon.png</uap:Logo>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+      </Extensions>
+    </Application>
+  </Applications>
+</Package>

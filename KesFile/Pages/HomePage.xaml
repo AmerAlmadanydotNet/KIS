@@ -36,7 +36,9 @@
                     <Border Grid.Column="1" Width="80" Height="80"
                             Background="{ThemeResource DropZoneBackgroundBrush}" CornerRadius="20"
                             Margin="24,0,0,0" VerticalAlignment="Center">
-                        <FontIcon Glyph="&#xE8B7;" FontSize="40" Foreground="{ThemeResource AppAccentBrush}"/>
+                        <Image Source="ms-appx:///Assets/KisFileIcon.png"
+                               Width="60" Height="60"
+                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
                 </Grid>
             </Border>
