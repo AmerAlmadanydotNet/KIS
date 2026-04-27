@@ -15,8 +15,47 @@
 $ErrorActionPreference = "Stop"
 $scriptDir    = $PSScriptRoot
 $certThumbprint = "780E0142856EBEF98CC2ECDAC027017D8211D870"
-$msbuild      = "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\MSBuild\Current\Bin\MSBuild.exe"
-$signtool     = "C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x64\signtool.exe"
+
+# --- Auto-detect MSBuild.exe (any VS 2022 edition: Enterprise/Professional/Community/BuildTools) ---
+function Find-MSBuild {
+    $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
+    if (Test-Path $vswhere) {
+        $found = & $vswhere -latest -products * -requires Microsoft.Component.MSBuild `
+                            -find "MSBuild\**\Bin\MSBuild.exe" 2>$null | Select-Object -First 1
+        if ($found -and (Test-Path $found)) { return $found }
+    }
+    $candidates = @(
+        "${env:ProgramFiles}\Microsoft Visual Studio\2022\*\MSBuild\Current\Bin\MSBuild.exe",
+        "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2022\*\MSBuild\Current\Bin\MSBuild.exe"
+    )
+    foreach ($pattern in $candidates) {
+        $hit = Get-ChildItem $pattern -ErrorAction SilentlyContinue | Select-Object -First 1
+        if ($hit) { return $hit.FullName }
+    }
+    return $null
+}
+
+# --- Auto-detect signtool.exe (latest Windows 10/11 SDK) ---
+function Find-SignTool {
+    $patterns = @(
+        "${env:ProgramFiles(x86)}\Windows Kits\10\bin\*\x64\signtool.exe",
+        "${env:ProgramFiles}\Windows Kits\10\bin\*\x64\signtool.exe"
+    )
+    foreach ($pattern in $patterns) {
+        $hit = Get-ChildItem $pattern -ErrorAction SilentlyContinue |
+               Sort-Object FullName -Descending | Select-Object -First 1
+        if ($hit) { return $hit.FullName }
+    }
+    return $null
+}
+
+$msbuild  = Find-MSBuild
+$signtool = Find-SignTool
+if (-not $msbuild)  { Write-Error "MSBuild.exe not found. Install Visual Studio 2022 or Build Tools." }
+if (-not $signtool) { Write-Error "signtool.exe not found. Install Windows 10/11 SDK." }
+Write-Host "MSBuild : $msbuild"  -ForegroundColor DarkGray
+Write-Host "SignTool: $signtool" -ForegroundColor DarkGray
+
 $csprojPath   = Join-Path $scriptDir "KesFile\KesFile.csproj"
 $outputDir    = Join-Path $scriptDir "KISfile-Setup"
 $exeOutput    = Join-Path $scriptDir "KISfile-Setup.exe"
@@ -71,9 +110,21 @@ Write-OK
 
 #  Sign the MSIX --------------------------------------------
 Write-Step "Signing MSIX with developer certificate..."
-& $signtool sign /sha1 $certThumbprint /fd SHA256 /q $msixFile.FullName
-if ($LASTEXITCODE -ne 0) { Write-Error "signtool failed." }
-Write-OK
+$certInStore = Get-ChildItem Cert:\CurrentUser\My,Cert:\LocalMachine\My -ErrorAction SilentlyContinue |
+               Where-Object { $_.Thumbprint -eq $certThumbprint } | Select-Object -First 1
+if ($certInStore) {
+    & $signtool sign /sha1 $certThumbprint /fd SHA256 /q $msixFile.FullName
+    if ($LASTEXITCODE -ne 0) { Write-Error "signtool failed." }
+    Write-OK
+} else {
+    Write-Host "   Cert thumbprint $certThumbprint not in store - using existing signature from build." -ForegroundColor Yellow
+    # Verify the MSIX is already signed
+    $verifyOut = & $signtool verify /pa $msixFile.FullName 2>&1
+    if ($LASTEXITCODE -ne 0) {
+        Write-Error "MSIX is not signed and no signing cert is available. Build in Visual Studio first."
+    }
+    Write-Host "   MSIX already signed by build process - OK." -ForegroundColor Green
+}
 
 #  Export certificate ---------------------------------------
 Write-Step "Exporting signing certificate..."
@@ -93,12 +144,28 @@ if (-not $cert) {
 }
 if (-not $cert) {
     # Try from file if already exported
-    $existing = "C:\Temp\KesFileDev.cer"
-    if (Test-Path $existing) {
-        Copy-Item $existing $certOutPath
-        Write-Host "   Used pre-exported cert from C:\Temp\KesFileDev.cer" -ForegroundColor White
+    $candidates = @(
+        (Join-Path $scriptDir "KesFile\cert\KesFileDev.cer"),
+        "C:\Temp\KesFileDev.cer"
+    )
+    $found = $candidates | Where-Object { Test-Path $_ } | Select-Object -First 1
+    if ($found) {
+        Copy-Item $found $certOutPath
+        Write-Host "   Used pre-exported cert: $found" -ForegroundColor White
     } else {
-        Write-Error "Certificate with thumbprint $certThumbprint not found."
+        # Last resort: extract the cert from the signed MSIX itself
+        try {
+            $msixCert = (Get-AuthenticodeSignature $msixFile.FullName).SignerCertificate
+            if ($msixCert) {
+                $bytes = $msixCert.Export([System.Security.Cryptography.X509Certificates.X509ContentType]::Cert)
+                [System.IO.File]::WriteAllBytes($certOutPath, $bytes)
+                Write-Host "   Extracted cert from MSIX signature." -ForegroundColor White
+            } else {
+                Write-Error "No certificate available."
+            }
+        } catch {
+            Write-Error "Certificate with thumbprint $certThumbprint not found and no fallback worked."
+        }
     }
 } else {
     $certBytes = $cert.Export(
