@@ -1,4 +1,4 @@
-﻿#
+#
 # This script just calls the Add-AppDevPackage.ps1 script that lives next to it.
 #
 

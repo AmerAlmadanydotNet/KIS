@@ -10,8 +10,10 @@ namespace KesFile
 {
     sealed partial class App : Application
     {
-        private static readonly string ErrorLogPath =
-            Path.Combine(Path.GetTempPath(), "KesFileError.txt");
+        private static string ErrorLogPath =>
+            Path.Combine(
+                Windows.Storage.ApplicationData.Current.LocalFolder.Path,
+                "KesFileError.txt");
 
         public App()
         {

@@ -33,6 +33,9 @@ class SfxStub
     [STAThread]
     static void Main()
     {
+        // Make the console window title visible
+        Console.Title = "KIS file Setup";
+
         try
         {
             string exePath = Process.GetCurrentProcess().MainModule.FileName;
@@ -42,35 +45,50 @@ class SfxStub
             // --------------------------------------------------
             if (!IsAdmin())
             {
+                Console.WriteLine("  Requesting administrator privileges...");
                 try
                 {
-                    Process.Start(new ProcessStartInfo
+                    var p = Process.Start(new ProcessStartInfo
                     {
                         FileName        = exePath,
                         Verb            = "runas",
                         UseShellExecute = true
                     });
+                    // Wait briefly so the elevated window can take focus
+                    if (p != null) System.Threading.Thread.Sleep(500);
                 }
                 catch
                 {
                     // User cancelled the UAC prompt
-                    MessageBox(IntPtr.Zero,
-                        "Administrator rights are required to install KIS file.\n\nSetup will now exit.",
-                        "KIS file Setup", 0x40 /* MB_ICONINFORMATION */);
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("\n  ERROR: Administrator rights are required to install KIS file.");
+                    Console.ResetColor();
+                    Console.WriteLine("\n  Press Enter to close...");
+                    Console.ReadLine();
                 }
                 return;
             }
 
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine("");
+            Console.WriteLine("  ==========================================");
+            Console.WriteLine("      KIS file  -  Setup                   ");
+            Console.WriteLine("  ==========================================");
+            Console.ResetColor();
+            Console.WriteLine("");
+
             // --------------------------------------------------
             // 2. Read trailer to find the embedded ZIP
             // --------------------------------------------------
+            Console.WriteLine("  Verifying installer package...");
             long fileSize = new FileInfo(exePath).Length;
 
             if (fileSize < TRAILER + 22)
             {
-                MessageBox(IntPtr.Zero,
-                    "The installer file is corrupted (too small).\nPlease re-download.",
-                    "KIS file Setup", 0x10);
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("  ERROR: The installer file is corrupted (too small). Please re-download.");
+                Console.ResetColor();
+                Console.WriteLine("\n  Press Enter to close..."); Console.ReadLine();
                 return;
             }
 
@@ -86,9 +104,10 @@ class SfxStub
 
             if (magic != MAGIC)
             {
-                MessageBox(IntPtr.Zero,
-                    "The installer file is corrupted (bad signature).\nPlease re-download.",
-                    "KIS file Setup", 0x10);
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("  ERROR: The installer file is corrupted (bad signature). Please re-download.");
+                Console.ResetColor();
+                Console.WriteLine("\n  Press Enter to close..."); Console.ReadLine();
                 return;
             }
 
@@ -110,6 +129,7 @@ class SfxStub
             // --------------------------------------------------
             // 3. Extract ZIP to a unique temp folder
             // --------------------------------------------------
+            Console.WriteLine("  Extracting setup files...");
             string tempDir = Path.Combine(
                 Path.GetTempPath(),
                 "KISfile_" + Guid.NewGuid().ToString("N").Substring(0, 8));
@@ -137,10 +157,9 @@ class SfxStub
 
             // --------------------------------------------------
             // 4. Run Install.ps1 in its own PowerShell window.
-            //    We are already admin so Install.ps1's own UAC
-            //    check will pass immediately.  Wait for it to
-            //    finish so the temp folder is not deleted early.
             // --------------------------------------------------
+            Console.WriteLine("  Starting installer...");
+            Console.WriteLine("");
             string ps1 = Path.Combine(tempDir, "Install.ps1");
 
             var proc = Process.Start(new ProcessStartInfo
@@ -158,9 +177,11 @@ class SfxStub
         }
         catch (Exception ex)
         {
-            MessageBox(IntPtr.Zero,
-                "KIS file Setup error:\n\n" + ex.Message,
-                "KIS file Setup", 0x10);
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("\n  KIS file Setup error:\n\n  " + ex.Message);
+            Console.ResetColor();
+            Console.WriteLine("\n  Press Enter to close...");
+            Console.ReadLine();
         }
     }
 }

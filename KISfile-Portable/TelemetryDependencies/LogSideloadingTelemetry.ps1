@@ -1,4 +1,4 @@
-﻿#
+#
 # This script handles common telemetry tasks for Install.ps1 and Add-AppDevPackage.ps1.
 #
 

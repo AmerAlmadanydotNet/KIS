@@ -1,6 +1,6 @@
-﻿KIS file v1.0.0 - Setup Package
+KIS file v1.0.0 - Setup Package
 ================================
-Built by Anti-Moumen - 2026
+Built by Ahmad Madany - 2026
 
 HOW TO INSTALL
 --------------

@@ -1,4 +1,4 @@
-﻿#Requires -Version 5.0
+#Requires -Version 5.0
 # ============================================================
 #  CreateSetupPackage.ps1
 #
@@ -195,6 +195,18 @@ if (Test-Path $depsSource) {
 }
 Write-OK
 
+#  Copy shell extension ------------------------------------
+Write-Step "Copying KIS shell extension (context menu)..."
+$shellExtLayout = Join-Path $scriptDir "tools\kis-shellext\layout"
+if (Test-Path $shellExtLayout) {
+    $shellExtTarget = Join-Path $outputDir "ShellExt"
+    Copy-Item $shellExtLayout $shellExtTarget -Recurse -Force
+    Write-OK
+} else {
+    Write-Host "   Shell extension layout not found at $shellExtLayout - skipping." -ForegroundColor Yellow
+    Write-Host "   Run tools\kis-shellext\Install-KisShellExt.ps1 once to build the layout." -ForegroundColor Yellow
+}
+
 #  Copy Installer scripts -----------------------------------
 Write-Step "Copying installer scripts..."
 $installerSrc = Join-Path $scriptDir "Installer"
@@ -217,7 +229,7 @@ Write-Step "Writing README..."
 $readme = @"
 KIS file v1.0.0 - Setup Package
 ================================
-Built by Anti-Moumen - 2026
+Built by Ahmad Madany - 2026
 
 HOW TO INSTALL
 --------------
@@ -233,6 +245,7 @@ CONTENTS
   Install.bat          - Double-click launcher
   Install.ps1          - Installer script (PowerShell)
   KISfile.msix         - Application package
+  ShellExt\            - Context menu (right-click) integration
   cert\KISfile.cer     - Signing certificate
   Dependencies\x64\   - Required framework packages
   ReleaseNotes.html    - Release notes (open in any browser)
@@ -250,6 +263,7 @@ NOTES
     - Installs the signing certificate (trusted locally)
     - Installs required framework dependencies
     - Installs KIS file and registers the .kes file type
+    - Registers the KIS right-click context menu
 "@
 $readme | Set-Content (Join-Path $outputDir "README.txt") -Encoding UTF8
 Write-OK
@@ -266,7 +280,7 @@ $provider = New-Object Microsoft.CSharp.CSharpCodeProvider
 $cparms   = New-Object System.CodeDom.Compiler.CompilerParameters
 $cparms.OutputAssembly      = $sfxExeTemp
 $cparms.GenerateExecutable  = $true
-$cparms.CompilerOptions     = "/target:winexe /optimize+"
+$cparms.CompilerOptions     = "/target:exe /optimize+"
 $cparms.ReferencedAssemblies.Add($compressionDll) | Out-Null
 $cparms.ReferencedAssemblies.Add("System.dll")    | Out-Null
 $cparms.ReferencedAssemblies.Add("System.Security.dll") | Out-Null

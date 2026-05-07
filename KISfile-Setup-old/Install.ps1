@@ -29,7 +29,7 @@ function Show-Banner {
     Write-Host "  ==========================================" -ForegroundColor Cyan
     Write-Host "      KIS file  -  Application Setup        " -ForegroundColor Cyan
     Write-Host "              Version  1.0.0                " -ForegroundColor Cyan
-    Write-Host "          by  Anti-Moumen  (2026)           " -ForegroundColor Cyan
+    Write-Host "          by  Ahmad Madany  (2026)           " -ForegroundColor Cyan
     Write-Host "  ==========================================" -ForegroundColor Cyan
     Write-Host ""
 }

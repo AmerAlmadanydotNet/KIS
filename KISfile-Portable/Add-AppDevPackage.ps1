@@ -1,4 +1,4 @@
-﻿#
+#
 # Add-AppxDevPackage.ps1 is a PowerShell script designed to install app
 # packages created by Visual Studio for developers.  To run this script from
 # Explorer, right-click on its icon and choose "Run with PowerShell".

@@ -10,7 +10,7 @@ exit /b
 echo.
 echo  ==========================================
 echo      KIS file  -  Setup v1.0.0
-echo      by Anti-Moumen (2026)
+echo      by Ahmad Madany (2026)
 echo  ==========================================
 echo.
 echo  Installing KIS file...

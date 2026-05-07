@@ -1,6 +1,6 @@
 ﻿KIS file v1.0.0 - Setup Package
 ================================
-Built by Anti-Moumen - 2026
+Built by Ahmad Madany - 2026
 
 HOW TO INSTALL
 --------------
@@ -16,6 +16,7 @@ CONTENTS
   Install.bat          - Double-click launcher
   Install.ps1          - Installer script (PowerShell)
   KISfile.msix         - Application package
+  ShellExt\            - Context menu (right-click) integration
   cert\KISfile.cer     - Signing certificate
   Dependencies\x64\   - Required framework packages
   ReleaseNotes.html    - Release notes (open in any browser)
@@ -33,3 +34,4 @@ NOTES
     - Installs the signing certificate (trusted locally)
     - Installs required framework dependencies
     - Installs KIS file and registers the .kes file type
+    - Registers the KIS right-click context menu

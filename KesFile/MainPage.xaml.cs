@@ -45,9 +45,13 @@ namespace KesFile
                 return;
             }
 
-            // Select Home by default
-            NavView.SelectedItem = NavView.MenuItems[0];
-            ContentFrame.Navigate(typeof(HomePage));
+            // Select Home by default, only if menu items are present
+            var homeItem = NavView.MenuItems.Count > 0 ? NavView.MenuItems[0] : null;
+            if (homeItem != null)
+            {
+                NavView.SelectedItem = homeItem;
+                ContentFrame.Navigate(typeof(HomePage));
+            }
         }
 
         private void NavView_SelectionChanged(NavigationView sender,
